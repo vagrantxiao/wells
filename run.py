@@ -3,11 +3,20 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+w1 = 1               # weights for interaction
+w2 = 0               # weights for percipitation
+
 
 A = 0.5
 u = 60
 B = 200
- 
+N = 50                 # The grid number
+G = 100                # How many years you want to predict
+dec_others = 0.05     # The impact factor by others 
+inc_global = 0.5       # The global factor: nutrient from soil
+
+
+
 def return_r_p(r):
   # my_m = float(r)/10
   my_m = r
@@ -76,7 +85,7 @@ def raw_pic_well(x, y, r, num, wells):
 
 
 if __name__ == '__main__':
-  MON = 960
+  MON = 9600
  
   my_m = np.ones(MON)
   my_p = np.ones(MON)
@@ -98,10 +107,7 @@ if __name__ == '__main__':
   #plt.savefig("my_fig.png", bbox_inches='tight')
   #plt.show()
 
-  N = 50                 # The grid number
-  G = 100                # How many years you want to predict
-  dec_others = 0.005     # The impact factor by others 
-  inc_global = 0.1       # The global factor: precipitation 
+
 
   np.random.seed(123)
 
@@ -160,6 +166,16 @@ if __name__ == '__main__':
   print ("r_min=", r_min)
 
 
-  raw_pic_well(x, y, r, 100000, wells)
+  raw_pic_well(x, y, r, "_intial", wells)
+
+  for num in range(50):
+    for i in range(N):
+      for j in range(N):
+        r[i][j] = w1*return_radius(x, y, r, i, j, dec_others, inc_global) + w2*my_r[num*10]
+  
+    print (num)
+    #if(num%10 == 0):
+    raw_pic_well(x, y, r, 'p_'+str(num), wells)
+
 
     
