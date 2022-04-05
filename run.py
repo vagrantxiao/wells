@@ -19,6 +19,28 @@ def return_r_p(r):
   #print(my_x)
   #print(my_y)
 
+def distance(x1,y1,x2, y2):
+  dist = np.sqrt((x1-x2)**2+(y1-y2)**2);
+  return dist
+
+def return_radius(x, y, r, row, col, dec_others, inc_global):
+    sum = 0;
+    dim_in = x.shape
+
+    for i in range(dim_in[0]):
+      for j in range(dim_in[1]):
+            dist = distance(row, col, x[i,j], y[i,j]);
+            if dist != 0:
+                sum = sum + (1/dist)*r[i][j]
+
+    tmp =r[row][col] - sum * dec_others + inc_global
+    if tmp < 0:
+        return 0
+    else:
+        return tmp
+
+
+
 def raw_pic(x, y, r, num):
   fig = plt.figure(figsize=(10, 10), dpi=80)
   ax = fig.add_subplot(111)
@@ -31,6 +53,27 @@ def raw_pic(x, y, r, num):
   plt.ylim([-1, N])
   plt.savefig("./output/p"+str(num)+".png", bbox_inches='tight')
   # plt.show()
+
+def raw_pic_well(x, y, r, num, wells):
+  fig = plt.figure(figsize=(10, 10), dpi=80)
+  ax = fig.add_subplot(111)
+  for i in range(N):
+    for j in range(N):
+      shape = matplotlib.patches.Circle((x[i][j], y[i][j]), r[i][j], edgecolor='blue', fill=False)
+      ax.add_patch(shape)
+  
+  shape = matplotlib.patches.Circle((wells[0][0], wells[0][1]), 0.5, color='red')
+  ax.add_patch(shape)
+  shape = matplotlib.patches.Circle((wells[1][0], wells[1][1]), 0.5, color='red')
+  ax.add_patch(shape)
+  shape = matplotlib.patches.Circle((wells[2][0], wells[2][1]), 0.5, color='red')
+  ax.add_patch(shape)
+
+  plt.xlim([-1, N])
+  plt.ylim([-1, N])
+  plt.savefig("./output/p"+str(num)+".png", bbox_inches='tight')
+  # plt.show()
+
 
 if __name__ == '__main__':
   MON = 960
@@ -64,9 +107,9 @@ if __name__ == '__main__':
 
 
   # water wells coordinates
-  wells=np.array([[15, 40],
-                [23, 30],
-                [22, 34]])
+  wells=np.array([[5, 5],
+                [20, 40],
+                [40, 10]])
 
 
   x = np.random.rand(N,N)*N
@@ -80,11 +123,43 @@ if __name__ == '__main__':
       x[i, j] = i;
       y[i, j] = j;
 
-  for month in range(1, MON, 10):
-    for i in range(N):
-      for j in range(N):
-        r[i][j] = my_r[month]
-    
 
-    raw_pic(x, y, r, int(month/10))
-    print(month/10, r[0][0])
+  #for month in range(1, MON, 10):
+  #  for i in range(N):
+  #    for j in range(N):
+  #      r[i][j] = my_r[month]
+  #  raw_pic(x, y, r, int(month/10))
+  #  print(month/10, r[0][0])
+
+  r_max = 0
+  r_min = 1000
+  for i in range(N):
+    for j in range(N):
+
+      # calculate the distance to the closest well
+      wells_dim = wells.shape
+      dist_min = distance(wells[0][0],wells[0][1], i, j)
+      for k in range(wells_dim[0]):
+        dist = distance(wells[k][0], wells[k][1], i, j)
+        if dist < dist_min: dist_min = dist
+    
+      #if dist_min != 0:
+      r[i, j] = dist_min
+      if r_max < r[i,j]:
+        r_max = r[i, j]
+        
+      if r_min > r[i, j]:
+        r_min = r[i, j]
+
+  for i in range(N):
+    for j in range(N):
+      r[i, j] = (r_max-r[i, j])/r_max*0.5
+
+  
+  print ("r_max=", r_max)
+  print ("r_min=", r_min)
+
+
+  raw_pic_well(x, y, r, 100000, wells)
+
+    
