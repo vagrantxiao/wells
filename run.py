@@ -12,8 +12,8 @@ u = 60
 B = 200
 N = 50                 # The grid number
 G = 100                # How many years you want to predict
-dec_others = 0.05     # The impact factor by others 
-inc_global = 0.5       # The global factor: nutrient from soil
+dec_others = 0.5     # The impact factor by others 
+inc_global = 0.5      # The global factor: nutrient from soil
 
 
 
@@ -36,8 +36,20 @@ def return_radius(x, y, r, row, col, dec_others, inc_global):
     sum = 0;
     dim_in = x.shape
 
-    for i in range(dim_in[0]):
-      for j in range(dim_in[1]):
+    #for i in range(dim_in[0]):
+      #for j in range(dim_in[1]):
+    v = 1
+    if row - v < 0: i_min = 0
+    else          : i_min = row-v
+    if row + v > dim_in[0]: i_max = dim_in[0] 
+    else                  : i_max = row+v
+    if col - v < 0: j_min = 0
+    else          : j_min = col-v
+    if col + v > dim_in[1]: j_max = dim_in[1]
+    else                  : j_max = col+v
+
+    for i in range(i_min, i_max):
+      for j in range(j_min, j_max):
             dist = distance(row, col, x[i,j], y[i,j]);
             if dist != 0:
                 sum = sum + (1/dist)*r[i][j]
