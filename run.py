@@ -41,12 +41,12 @@ def return_radius(x, y, r, row, col, dec_others, inc_global):
     v = 1
     if row - v < 0: i_min = 0
     else          : i_min = row-v
-    if row + v + 1 > dim_in[0]: i_max = dim_in[0] 
-    else                  : i_max = row+v+1
+    if row + v > dim_in[0]: i_max = dim_in[0] 
+    else                  : i_max = row+v
     if col - v < 0: j_min = 0
     else          : j_min = col-v
-    if col + v+1 > dim_in[1]: j_max = dim_in[1]
-    else                  : j_max = col+v+1
+    if col + v > dim_in[1]: j_max = dim_in[1]
+    else                  : j_max = col+v
 
     #print (row, col)
     for i in range(i_min, i_max):
