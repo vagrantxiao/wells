@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 w1 = 1               # weights for interaction
-w2 = 0               # weights for percipitation
-
+w2 = 0              # weights for percipitation
+w3 = 0               # weights for wells
 
 A = 0.5
 u = 60
@@ -139,6 +139,7 @@ if __name__ == '__main__':
   y = np.random.rand(N,N)*N
   y = y.astype(int)
   r = np.random.rand(N,N)
+  r_by_well = np.random.rand(N,N)
   
   for i in range(N):
     for j in range(N):
@@ -173,10 +174,11 @@ if __name__ == '__main__':
       if r_min > r[i, j]:
         r_min = r[i, j]
 
+  # initial radius determined by the wells
   for i in range(N):
     for j in range(N):
-      r[i, j] = (r_max-r[i, j])/r_max*0.5
-
+      r[i, j] = (r_max-r[i, j])/r_max*0.5*(w1+w3)+my_r[0]*w2
+      r_by_well[i, j] = r[i, j]
   
   print ("r_max=", r_max)
   print ("r_min=", r_min)
@@ -187,7 +189,7 @@ if __name__ == '__main__':
   for num in range(200):
     for i in range(N):
       for j in range(N):
-        r[i][j] = w1*return_radius(x, y, r, i, j, dec_others, inc_global) + w2*my_r[num*10]
+        r[i][j] = w1*return_radius(x, y, r, i, j, dec_others, inc_global) + w2*my_r[num*10] + w3*r_by_well[i, j]
         if r[i][j] > 0.7: r[i][j] = 0.7
   
     print (num)
