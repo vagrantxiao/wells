@@ -3,9 +3,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-w1 = 1               # weights for interaction
-w2 = 0              # weights for percipitation
-w3 = 0               # weights for wells
+w1 = 0.7               # weights for interaction
+w2 = 0.01              # weights for percipitation
+w3 = 0.4             # weights for wells
 
 A = 0.5
 u = 60
