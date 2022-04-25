@@ -10,7 +10,8 @@ w3 = 0.4             # weights for wells
 A = 0.5
 u = 60
 B = 200
-N = 50                 # The grid number
+MAX_Y = 40           # The grid height
+MAX_X = 60           # The grid width
 G = 100                # How many years you want to predict
 dec_others = 0.5     # The impact factor by others 
 inc_global = 0.5      # The global factor: nutrient from soil
@@ -28,7 +29,7 @@ def return_r_p(r):
   #print(my_x)
   #print(my_y)
 
-def distance(x1,y1,x2, y2):
+def distance(x1, y1, x2, y2):
   dist = np.sqrt((x1-x2)**2+(y1-y2)**2);
   return dist
 
@@ -48,10 +49,10 @@ def return_radius(x, y, r, row, col, dec_others, inc_global):
     if col + v > dim_in[1]: j_max = dim_in[1]
     else                  : j_max = col+v
 
-    #print (row, col)
+    print ("target:", row, col)
     for i in range(i_min, i_max):
       for j in range(j_min, j_max):
-            #print (i, j)
+            print (i, j)
             dist = distance(row, col, x[i,j], y[i,j]);
             if dist != 0:
                 sum = sum + (1/dist)*r[i][j]
@@ -78,12 +79,13 @@ def raw_pic(x, y, r, num):
   plt.savefig("./output/p"+str(num)+".png", bbox_inches='tight')
   # plt.show()
 
-def raw_pic_well(x, y, r, num, wells):
-  fig = plt.figure(figsize=(10, 10), dpi=80)
+def raw_pic_well(r, num, wells):
+  r_dim = r.shape;
+  fig = plt.figure(figsize=(MAX_X, MAX_Y), dpi=80)
   ax = fig.add_subplot(111)
-  for i in range(N):
-    for j in range(N):
-      shape = matplotlib.patches.Circle((x[i][j], y[i][j]), r[i][j], edgecolor='blue', fill=False)
+  for y in range(MAX_Y):
+    for x in range(MAX_X):
+      shape = matplotlib.patches.Circle((x, y), r[x][y], edgecolor='blue', fill=False)
       ax.add_patch(shape)
   
   shape = matplotlib.patches.Circle((wells[0][0], wells[0][1]), 0.5, color='red')
@@ -93,8 +95,8 @@ def raw_pic_well(x, y, r, num, wells):
   shape = matplotlib.patches.Circle((wells[2][0], wells[2][1]), 0.5, color='red')
   ax.add_patch(shape)
 
-  plt.xlim([-1, N])
-  plt.ylim([-1, N])
+  plt.xlim([-1, MAX_X])
+  plt.ylim([-1, MAX_Y])
   plt.savefig("./output/p"+str(num)+".png", bbox_inches='tight')
   # plt.show()
 
@@ -112,64 +114,49 @@ if __name__ == '__main__':
 
 
   np.random.seed(123)
-  
+
   # water wells coordinates
+  # (X, Y) coordinates
   wells=np.array([[5, 5],
-                [20, 40],
+                [20, 30],
                 [40, 10]])
 
 
-  x = np.random.rand(N,N)*N
-  x = x.astype(int)
-  y = np.random.rand(N,N)*N
-  y = y.astype(int)
-  r = np.random.rand(N,N)
-  r_by_well = np.random.rand(N,N)
+  r = np.random.rand(MAX_X,MAX_Y)
+  r_by_well = np.random.rand(MAX_X,MAX_Y)
   
-  for i in range(N):
-    for j in range(N):
-      x[i, j] = i;
-      y[i, j] = j;
 
-
-  #for month in range(1, MON, 10):
-  #  for i in range(N):
-  #    for j in range(N):
-  #      r[i][j] = my_r[month]
-  #  raw_pic(x, y, r, int(month/10))
-  #  print(month/10, r[0][0])
 
   r_max = 0
   r_min = 1000
-  for i in range(N):
-    for j in range(N):
-
+  for y in range(MAX_Y):
+    for x in range(MAX_X):
       # calculate the distance to the closest well
       wells_dim = wells.shape
-      dist_min = distance(wells[0][0],wells[0][1], i, j)
+      dist_min = distance(wells[0][0],wells[0][1], x, y)
       for k in range(wells_dim[0]):
-        dist = distance(wells[k][0], wells[k][1], i, j)
+        dist = distance(wells[k][0], wells[k][1], x, y)
         if dist < dist_min: dist_min = dist
     
       #if dist_min != 0:
-      r[i, j] = dist_min
-      if r_max < r[i,j]:
-        r_max = r[i, j]
+      r[x, y] = dist_min
+      if r_max < r[x, y]:
+        r_max = r[x, y]
         
-      if r_min > r[i, j]:
-        r_min = r[i, j]
+      if r_min > r[x, y]:
+        r_min = r[x, y]
 
   # initial radius determined by the wells
-  for i in range(N):
-    for j in range(N):
-      r[i, j] = (r_max-r[i, j])/r_max*0.5*(w1+w3)+my_r[0]*w2
-      r_by_well[i, j] = r[i, j]
+  for y in range(MAX_Y):
+    for x in range(MAX_X):
+      r[x, y] = (r_max-r[x, y])/r_max*0.5*(w1+w3)+my_r[0]*w2
+      r_by_well[x, y] = r[x, y]
   
   print ("r_max=", r_max)
   print ("r_min=", r_min)
 
 
-  raw_pic_well(x, y, r, "_intial", wells)
+  raw_pic_well(r, "_intial", wells)
 
   for num in range(200):
     for i in range(N):
