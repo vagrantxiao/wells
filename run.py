@@ -33,32 +33,27 @@ def distance(x1, y1, x2, y2):
   dist = np.sqrt((x1-x2)**2+(y1-y2)**2);
   return dist
 
-def return_radius(x, y, r, row, col, dec_others, inc_global):
+def return_radius(r, x, y, dec_others, inc_global):
     sum = 0;
-    dim_in = x.shape
+    dim_in = r.shape
 
-    #for i in range(dim_in[0]):
-      #for j in range(dim_in[1]):
-    v = 1
-    if row - v < 0: i_min = 0
-    else          : i_min = row-v
-    if row + v > dim_in[0]: i_max = dim_in[0] 
-    else                  : i_max = row+v
-    if col - v < 0: j_min = 0
-    else          : j_min = col-v
-    if col + v > dim_in[1]: j_max = dim_in[1]
-    else                  : j_max = col+v
+    # print ("target:", x, y)
+    x_minus = 1
+    x_plus  = 1
+    y_minus = 1
+    y_plus  = 1
 
-    print ("target:", row, col)
-    for i in range(i_min, i_max):
-      for j in range(j_min, j_max):
-            print (i, j)
-            dist = distance(row, col, x[i,j], y[i,j]);
-            if dist != 0:
-                sum = sum + (1/dist)*r[i][j]
+    # y_v: y axis vicinity
+    # x_v: x axis vicinity
+    for y_v in range(y-y_minus, y+y_plus+1, 1):
+      for x_v in range(x-x_minus, x+x_plus+1, 1):
+        dist = distance(x_v, y_v, x, y)
+        if x_v >=0 and x_v < dim_in[0] and y_v>=0 and y_v <dim_in[1] and dist != 0:
+          # print (x_v, y_v)
+          sum = sum + (1/dist)*r[x_v][y_v]
 
     #print ('')
-    tmp =r[row][col] - sum * dec_others + inc_global
+    tmp =r[x][y] - sum * dec_others + inc_global
     if tmp < 0:
         return 0
     else:
@@ -147,14 +142,14 @@ if __name__ == '__main__':
   raw_pic_well(r, "_intial", wells)
 
   for num in range(200):
-    for i in range(N):
-      for j in range(N):
-        r[i][j] = w1*return_radius(x, y, r, i, j, dec_others, inc_global) + w2*my_r[num*10] + w3*r_by_well[i, j]
-        if r[i][j] > 0.7: r[i][j] = 0.7
+    for y in range(MAX_Y):
+      for x in range(MAX_X):
+        r[x][y] = w1*return_radius(r, x, y, dec_others, inc_global) + w2*my_r[num*10] + w3*r_by_well[x, y]
+        if r[x][y] > 0.7: r[x][y] = 0.7
   
     print (num)
     #if(num%10 == 0):
-    raw_pic_well(x, y, r, 'p_'+str(num), wells)
+    raw_pic_well(r, 'p_'+str(num), wells)
 
 
     
