@@ -109,26 +109,11 @@ if __name__ == '__main__':
   for i in range(MON):
     my_m[i] = float(i)/10
     my_p[i], my_r[i] = return_r_p(my_m[i])
-    
- 
-  #fig = plt.figure(figsize=(10, 10), dpi=80)
-  #ax = fig.add_subplot(121)
-
-  #plt.plot(my_m, my_r)
-  #plt.plot(my_m, my_p/240+0.25)
-
-  #ax = fig.add_subplot(122)
-  #plt.plot(my_m, my_p)
-  #plt.savefig("my_fig.png", bbox_inches='tight')
-  #plt.show()
-
 
 
   np.random.seed(123)
-
-
+  
   # water wells coordinates
-  # 30, 20
   wells=np.array([[5, 5],
                 [20, 40],
                 [40, 10]])
