@@ -66,26 +66,14 @@ def return_radius(x, y, r, row, col, dec_others, inc_global):
 
 
 
-def raw_pic(x, y, r, num):
-  fig = plt.figure(figsize=(10, 10), dpi=80)
-  ax = fig.add_subplot(111)
-  for i in range(N):
-    for j in range(N):
-      shape = matplotlib.patches.Circle((x[i][j], y[i][j]), r[i][j], edgecolor='blue', fill=False)
-      ax.add_patch(shape)
-  
-  plt.xlim([-1, N])
-  plt.ylim([-1, N])
-  plt.savefig("./output/p"+str(num)+".png", bbox_inches='tight')
-  # plt.show()
-
 def raw_pic_well(r, num, wells):
   r_dim = r.shape;
   fig = plt.figure(figsize=(MAX_X, MAX_Y), dpi=80)
   ax = fig.add_subplot(111)
+  ax.set_facecolor('black')
   for y in range(MAX_Y):
     for x in range(MAX_X):
-      shape = matplotlib.patches.Circle((x, y), r[x][y], edgecolor='blue', fill=False)
+      shape = matplotlib.patches.Circle((x, y), r[x][y], edgecolor='yellow', fill=False)
       ax.add_patch(shape)
   
   shape = matplotlib.patches.Circle((wells[0][0], wells[0][1]), 0.5, color='red')
