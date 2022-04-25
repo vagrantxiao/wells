@@ -38,20 +38,23 @@ def return_radius(r, x, y, dec_others, inc_global):
     dim_in = r.shape
 
     # print ("target:", x, y)
-    x_minus = 1
+    x_minus = 0
     x_plus  = 1
     y_minus = 1
-    y_plus  = 1
+    y_plus  = 0
 
     # y_v: y axis vicinity
     # x_v: x axis vicinity
+    point_num = 1
     for y_v in range(y-y_minus, y+y_plus+1, 1):
       for x_v in range(x-x_minus, x+x_plus+1, 1):
         dist = distance(x_v, y_v, x, y)
         if x_v >=0 and x_v < dim_in[0] and y_v>=0 and y_v <dim_in[1] and dist != 0:
           # print (x_v, y_v)
+          point_num += 1
           sum = sum + (1/dist)*r[x_v][y_v]
 
+    # if point_num != 0: sum = sum / point_num
     #print ('')
     tmp =r[x][y] - sum * dec_others + inc_global
     if tmp < 0:
@@ -68,7 +71,7 @@ def raw_pic_well(r, num, wells):
   ax.set_facecolor('black')
   for y in range(MAX_Y):
     for x in range(MAX_X):
-      shape = matplotlib.patches.Circle((x, y), r[x][y], edgecolor='yellow', fill=False)
+      shape = matplotlib.patches.Circle((x, y), r[x][y], edgecolor='yellow', lw=5, fill=False)
       ax.add_patch(shape)
   
   shape = matplotlib.patches.Circle((wells[0][0], wells[0][1]), 0.5, color='red')
